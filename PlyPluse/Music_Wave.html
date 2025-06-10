@@ -1,0 +1,734 @@
+<!-- Developed By G Raghu
+                   K Goutham
+                   G Shashank
+                   Sk Sameer-->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Music Wave</title>
+    <!-- Favicon -->
+    <link href="favicon_io/1.png" rel="icon" />
+    <meta
+      content="Music Wave, Keytone Wave, Voice Wave, audio visualization, music analysis, interactive music, sound visualization, real-time audio processing"
+      name="keywords"
+    />
+    <meta
+      content="PlyPluse offers interactive audio visualization experiences. Explore Music Wave for uploaded audio, Keytone Wave for keyboard input, and Voice Wave for real-time voice visualization."
+      name="description"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* General Setup & Font Import */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Inter", sans-serif;
+        color: white;
+        background: linear-gradient(
+          135deg,
+          #11142d,
+          #321c94
+        ); /* Example gradient from index.html */
+        min-height: 100vh; /* Ensure body takes full viewport height */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between; /* Space out content and footer */
+        padding: 0 1rem; /* Add horizontal padding to body */
+      }
+      /* Custom styles for glassmorphism effect from index.html */
+      .glassmorphic {
+        background: rgba(
+          255,
+          255,
+          255,
+          0.1
+        ); /* Slightly transparent white background */
+        backdrop-filter: blur(10px); /* Blur effect */
+        border: 1px solid rgba(255, 255, 255, 0.2); /* Subtle white border */
+        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37); /* Shadow effect */
+        border-radius: 15px; /* Rounded corners */
+      }
+      .text-shadow {
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); /* Add subtle text shadow for readability */
+      }
+
+      /* Main container adjusted for flex column and content scrolling */
+      .app-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        flex-grow: 1; /* Allow container to grow and push footer down */
+        padding-top: 2rem; /* Space from navbar */
+        padding-bottom: 2rem; /* Space before footer */
+      }
+
+      /* Header styles */
+      .header {
+        margin-bottom: 2rem;
+        text-align: center;
+      }
+
+      .title {
+        font-size: 3.75rem; /* 5xl */
+        font-weight: 800; /* extrabold */
+        margin-bottom: 1rem;
+        text-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+      }
+
+      .subtitle {
+        font-size: 1.25rem; /* xl */
+        color: #c7d2fe; /* indigo-200 */
+      }
+
+      /* Main content card with glass effect */
+      .main-content {
+        background-color: rgba(31, 41, 55, 0.7); /* gray-800 with opacity */
+        backdrop-filter: blur(10px);
+        border-radius: 0.75rem; /* rounded-xl */
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        padding: 2rem;
+        max-width: 56rem; /* max-w-4xl */
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2rem;
+      }
+
+      /* File input styling */
+      .file-input-container {
+        width: 100%;
+        text-align: center;
+      }
+
+      .file-label {
+        display: block;
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 0.75rem;
+        color: #a5b4fc; /* indigo-300 */
+      }
+
+      #audio-file {
+        color: #d1d5db; /* gray-300 */
+        font-size: 0.875rem;
+        border-radius: 9999px;
+        width: 100%;
+      }
+
+      /* Styling the button part of the file input */
+      #audio-file::file-selector-button {
+        margin-right: 1rem;
+        padding: 0.5rem 1rem;
+        border-radius: 9999px;
+        border: 0;
+        font-size: 0.875rem;
+        font-weight: 600;
+        background-color: #8b5cf6; /* purple-500 */
+        color: white;
+        cursor: pointer;
+        transition: background-color 0.2s ease-in-out;
+      }
+
+      #audio-file::file-selector-button:hover {
+        background-color: #7c3aed; /* purple-600 */
+      }
+
+      /* Canvas container */
+      .canvas-container {
+        width: 100%;
+        height: 20rem; /* h-80 */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #111827; /* gray-900 */
+        border-radius: 0.5rem;
+        overflow: hidden;
+        box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.05);
+      }
+
+      #visualizer-canvas {
+        border-radius: 0.5rem;
+        border: 1px solid #8b5cf6; /* purple-500 */
+        box-shadow: 0 2px 10px rgba(139, 92, 246, 0.3);
+        width: 100%;
+        height: 100%;
+      }
+
+      /* Controls styling */
+      .controls-container {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 1.5rem;
+        margin-top: 1rem;
+      }
+
+      .play-pause-btn {
+        padding: 1rem 2rem;
+        border-radius: 9999px;
+        font-size: 1.125rem;
+        font-weight: 700;
+        transition: all 0.3s ease-in-out;
+        transform-origin: center;
+        border: none;
+        cursor: pointer;
+        background-image: linear-gradient(
+          to right,
+          #22c55e,
+          #14b8a6
+        ); /* from-green-500 to-teal-500 */
+        color: white;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .play-pause-btn:hover {
+        background-image: linear-gradient(
+          to right,
+          #16a34a,
+          #0d9488
+        ); /* from-green-600 to-teal-600 */
+      }
+
+      .play-pause-btn:active {
+        transform: scale(0.95);
+      }
+
+      .play-pause-btn:disabled {
+        background: #4b5563; /* gray-600 */
+        color: #9ca3af; /* gray-400 */
+        cursor: not-allowed;
+        box-shadow: none;
+      }
+
+      .play-pause-btn .icon {
+        width: 1.5rem;
+        height: 1.5rem;
+      }
+
+      .volume-control {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        width: 100%;
+        max-width: 250px;
+      }
+
+      .volume-label {
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: #a5b4fc; /* indigo-300 */
+      }
+
+      #volume-slider {
+        width: 100%;
+        -webkit-appearance: none;
+        appearance: none;
+        height: 0.5rem;
+        border-radius: 0.5rem;
+        background-color: #374151; /* gray-700 */
+        cursor: pointer;
+      }
+
+      /* Styling for Webkit (Chrome, Safari) */
+      #volume-slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 1rem;
+        height: 1rem;
+        border-radius: 50%;
+        background-color: #8b5cf6; /* purple-500 */
+        box-shadow: 0 0 5px rgba(139, 92, 246, 0.5);
+        transition: background-color 0.2s ease-in-out;
+      }
+
+      #volume-slider::-webkit-slider-thumb:hover {
+        background-color: #7c3aed; /* purple-600 */
+      }
+
+      /* Styling for Firefox */
+      #volume-slider::-moz-range-thumb {
+        width: 1rem;
+        height: 1rem;
+        border-radius: 50%;
+        background-color: #8b5cf6;
+        border: none;
+        box-shadow: 0 0 5px rgba(139, 92, 246, 0.5);
+        transition: background-color 0.2s ease-in-out;
+      }
+
+      #volume-slider::-moz-range-thumb:hover {
+        background-color: #7c3aed;
+      }
+
+      /* Footer styling */
+      .footer {
+        margin-top: 3rem;
+        text-align: center;
+        color: #fefefe; /* gray-400 */
+        font-size: 0.875rem;
+      }
+
+      /* Responsive adjustments for smaller screens */
+      @media (min-width: 640px) {
+        .controls-container {
+          flex-direction: row;
+        }
+        .volume-control {
+          width: auto;
+        }
+      }
+      .visualization-select {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        font-size: 1rem;
+        font-weight: 600;
+        color: #a5b4fc;
+      }
+
+      #visual-style {
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        border: none;
+        background-color: #374151;
+        color: white;
+        font-weight: 600;
+        cursor: pointer;
+      }
+    </style>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        // DOM Element References
+        let startTime = 0;
+        let pauseTime = 0;
+        const canvas = document.getElementById("visualizer-canvas");
+        const canvasCtx = canvas.getContext("2d");
+        const audioFileInput = document.getElementById("audio-file");
+        const playPauseBtn = document.getElementById("play-pause-btn");
+        const playPauseText = document.getElementById("play-pause-text");
+        const playIcon = document.getElementById("play-icon");
+        const pauseIcon = document.getElementById("pause-icon");
+        const volumeSlider = document.getElementById("volume-slider");
+
+        // Web Audio API State
+        let audioContext;
+        let analyser;
+        let source;
+        let gainNode;
+
+        // Application State
+        let audioBuffer = null;
+        let isPlaying = false;
+        let animationFrameId;
+
+        // Initialize Web Audio API components
+        function initAudioContext() {
+          if (!audioContext) {
+            const AudioContext =
+              window.AudioContext || window.webkitAudioContext;
+            audioContext = new AudioContext();
+
+            analyser = audioContext.createAnalyser();
+            analyser.fftSize = 256;
+
+            gainNode = audioContext.createGain();
+            gainNode.gain.value = volumeSlider.value;
+
+            analyser.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+          }
+        }
+
+        // Handle file selection
+        audioFileInput.addEventListener("change", async (event) => {
+          const file = event.target.files[0];
+          if (!file) return;
+
+          // Initialize AudioContext on first user interaction
+          initAudioContext();
+
+          // Stop any currently playing audio
+          if (source) {
+            stopAudio();
+          }
+          pauseTime = 0;
+          startTime = 0;
+
+          const reader = new FileReader();
+          reader.onload = async (e) => {
+            try {
+              audioBuffer = await audioContext.decodeAudioData(e.target.result);
+              playPauseBtn.disabled = false;
+              playAudio();
+            } catch (error) {
+              console.error("Error decoding audio data:", error);
+              alert("Could not decode audio file. Please try another file.");
+              playPauseBtn.disabled = true;
+            }
+          };
+          reader.readAsArrayBuffer(file);
+        });
+
+        // Play/Pause button handler
+        playPauseBtn.addEventListener("click", () => {
+          if (!audioBuffer) return;
+
+          if (isPlaying) {
+            stopAudio();
+          } else {
+            // Resume context if it was suspended
+            if (audioContext.state === "suspended") {
+              audioContext.resume().then(playAudio);
+            } else {
+              playAudio();
+            }
+          }
+        });
+
+        // Volume slider handler
+        volumeSlider.addEventListener("input", (event) => {
+          if (gainNode) {
+            gainNode.gain.value = event.target.value;
+          }
+        });
+
+        // Function to play audio
+        function playAudio() {
+          if (!audioBuffer || !audioContext) return;
+
+          source = audioContext.createBufferSource();
+          source.buffer = audioBuffer;
+          source.connect(analyser);
+
+          source.onended = () => {
+            if (isPlaying) stopAudio();
+          };
+
+          const offset = pauseTime || 0;
+          startTime = audioContext.currentTime - offset;
+
+          source.start(0, offset);
+
+          isPlaying = true;
+          updatePlayPauseUI();
+          draw();
+        }
+
+        // Function to stop audio
+        function stopAudio() {
+          if (source) {
+            try {
+              source.stop();
+              source.disconnect();
+            } catch (e) {
+              console.warn("Audio already stopped.");
+            }
+            source = null;
+          }
+
+          pauseTime = audioContext.currentTime - startTime; // Track paused time
+          isPlaying = false;
+          updatePlayPauseUI();
+          cancelAnimationFrame(animationFrameId);
+          canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        // Update button text and icon
+        function updatePlayPauseUI() {
+          if (isPlaying) {
+            playPauseText.textContent = "Pause";
+            playIcon.style.display = "none";
+            pauseIcon.style.display = "inline";
+          } else {
+            playPauseText.textContent = "Play";
+            playIcon.style.display = "inline";
+            pauseIcon.style.display = "none";
+          }
+        }
+
+        // Visualization drawing function
+        const styleSelect = document.getElementById("visual-style");
+        let currentStyle = "radial";
+
+        styleSelect.addEventListener("change", (e) => {
+          currentStyle = e.target.value;
+        });
+
+        function draw() {
+          if (!isPlaying) return;
+
+          animationFrameId = requestAnimationFrame(draw);
+
+          const bufferLength = analyser.frequencyBinCount;
+          const dataArray = new Uint8Array(bufferLength);
+          analyser.getByteFrequencyData(dataArray);
+
+          canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
+
+          switch (currentStyle) {
+            case "sine":
+              drawSineWave(dataArray, bufferLength);
+              break;
+            case "bars":
+              drawBars(dataArray, bufferLength);
+              break;
+            case "circle":
+              drawCircleWave(dataArray, bufferLength);
+              break;
+            default:
+              drawRadial(dataArray, bufferLength);
+          }
+        }
+
+        function drawSineWave(dataArray, bufferLength) {
+          canvasCtx.beginPath();
+          canvasCtx.lineWidth = 2;
+
+          const sliceWidth = canvas.width / bufferLength;
+          let x = 0;
+
+          for (let i = 0; i < bufferLength; i++) {
+            const v = dataArray[i] / 255;
+            const y = canvas.height / 2 + v * 100 * Math.sin(i * 0.2);
+
+            // Dynamic hue based on index and frequency
+            const hue = (i + dataArray[i] * 0.5) % 360;
+            canvasCtx.strokeStyle = `hsl(${hue}, 80%, 70%)`; // Use HSL for vibrant colors
+
+            if (i === 0) {
+              canvasCtx.moveTo(x, y);
+            } else {
+              canvasCtx.lineTo(x, y);
+            }
+
+            x += sliceWidth;
+          }
+
+          canvasCtx.stroke();
+        }
+
+        function drawBars(dataArray, bufferLength) {
+          const barWidth = (canvas.width / bufferLength) * 2.5;
+          let x = 0;
+
+          for (let i = 0; i < bufferLength; i++) {
+            const barHeight = dataArray[i];
+
+            // Cycle through hues and adjust saturation/lightness
+            const hue = (i * 5) % 360;
+            const saturation = 70 + (barHeight / 255) * 30;
+            const lightness = 50 + (barHeight / 255) * 30;
+            canvasCtx.fillStyle = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+
+            canvasCtx.fillRect(
+              x,
+              canvas.height - barHeight,
+              barWidth,
+              barHeight
+            );
+
+            x += barWidth + 1;
+          }
+        }
+
+        function drawCircleWave(dataArray, bufferLength) {
+          const centerX = canvas.width / 2;
+          const centerY = canvas.height / 2;
+
+          canvasCtx.beginPath();
+          canvasCtx.lineWidth = 2;
+
+          for (let i = 0; i < bufferLength; i++) {
+            const angle = (i / bufferLength) * Math.PI * 2;
+            const radius = 60 + dataArray[i] / 2;
+            const x = centerX + Math.cos(angle) * radius;
+            const y = centerY + Math.sin(angle) * radius;
+
+            // Dynamic hue for vibrant circle
+            const hue = (i * 2 + dataArray[i]) % 360;
+            canvasCtx.strokeStyle = `hsl(${hue}, 90%, 60%)`;
+
+            if (i === 0) {
+              canvasCtx.moveTo(x, y);
+            } else {
+              canvasCtx.lineTo(x, y);
+            }
+          }
+
+          canvasCtx.closePath();
+          canvasCtx.stroke();
+        }
+
+        function drawRadial(dataArray, bufferLength) {
+          const centerX = canvas.width / 2;
+          const centerY = canvas.height / 2;
+          const radius = 80;
+          const angleStep = (Math.PI * 2) / bufferLength;
+
+          for (let i = 0; i < bufferLength; i++) {
+            const value = dataArray[i];
+            const barLength = value * 1.2;
+            const angle = i * angleStep;
+
+            const x1 = centerX + Math.cos(angle) * radius;
+            const y1 = centerY + Math.sin(angle) * radius;
+            const x2 = centerX + Math.cos(angle) * (radius + barLength);
+            const y2 = centerY + Math.sin(angle) * (radius + barLength);
+
+            // Dynamic HSL colors for radial bars
+            const hue = (i * 3 + value) % 360;
+            const saturation = 80 + (value / 255) * 20;
+            const lightness = 60 + (value / 255) * 20;
+            canvasCtx.strokeStyle = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+
+            canvasCtx.lineWidth = 2;
+
+            canvasCtx.beginPath();
+            canvasCtx.moveTo(x1, y1);
+            canvasCtx.lineTo(x2, y2);
+            canvasCtx.stroke();
+          }
+        }
+
+        // Responsive Canvas Resizing
+        function resizeCanvas() {
+          const container = document.querySelector(".canvas-container");
+          canvas.width = container.clientWidth;
+          canvas.height = container.clientHeight;
+        }
+
+        window.addEventListener("resize", resizeCanvas);
+        resizeCanvas(); // Initial resize
+      });
+    </script>
+  </head>
+  <body>
+    <nav
+      class="glassmorphic w-full max-w-7xl mx-auto p-4 sm:p-6 mt-8 flex flex-col sm:flex-row items-center justify-between space-y-4 sm:space-y-0 shadow-lg"
+    >
+      <div class="flex items-center">
+        <span
+          class="text-white text-3xl font-extrabold tracking-wide text-shadow"
+        >
+          <span class="text-indigo-200">P</span>LY
+          <span class="text-indigo-200">P</span>LUSE
+        </span>
+      </div>
+
+      <div
+        class="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-8 text-white text-lg font-medium"
+      >
+        <a
+          href="index.html"
+          class="hover:text-indigo-200 transition duration-300"
+          >Home</a
+        >
+        <a
+          href="Music_Wave.html"
+          class="hover:text-indigo-200 transition duration-300"
+          >Music</a
+        >
+        <a
+          href="Keytone_Wave.html"
+          class="hover:text-indigo-200 transition duration-300"
+          >Keytone</a
+        >
+        <a
+          href="Voice_Wave.html"
+          class="hover:text-indigo-200 transition duration-300"
+          >Voice</a
+        >
+      </div>
+    </nav>
+
+    <div class="app-container">
+      <header class="header">
+        <h1 class="title">Music Wave</h1>
+        <p class="subtitle">
+          Upload an audio file and watch the music come alive!
+        </p>
+      </header>
+
+      <main class="main-content">
+        <div class="file-input-container">
+          <label for="audio-file" class="file-label"
+            >Select Your Audio File:</label
+          >
+          <input type="file" id="audio-file" accept="audio/*" />
+        </div>
+
+        <div class="canvas-container">
+          <canvas id="visualizer-canvas"></canvas>
+        </div>
+
+        <div class="controls-container">
+          <div class="visualization-select">
+            <label for="visual-style">Visualization Style:</label>
+            <select id="visual-style">
+              <option value="radial">Radial Bars</option>
+              <option value="sine">Sine Wave</option>
+              <option value="bars">Bars</option>
+              <option value="circle">Circle Wave</option>
+            </select>
+          </div>
+
+          <button id="play-pause-btn" class="play-pause-btn" disabled>
+            <span id="play-icon">
+              <svg class="icon" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.5 8H8V6.5h1.5V8zm2.5 0H11V6.5h1.5V8zM10 4a6 6 0 110 12 6 6 0 010-12z"
+                />
+              </svg>
+            </span>
+            <span id="pause-icon" style="display: none">
+              <svg class="icon" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.5 8H8V6.5h1.5V8zm2.5 0H11V6.5h1.5V8zM10 4a6 6 0 110 12 6 6 0 010-12z"
+                />
+              </svg>
+            </span>
+            <span id="play-pause-text">Play</span>
+          </button>
+
+          <div class="volume-control">
+            <label for="volume-slider" class="volume-label">Volume:</label>
+            <input
+              type="range"
+              id="volume-slider"
+              min="0"
+              max="1"
+              step="0.01"
+              value="0.7"
+            />
+          </div>
+        </div>
+      </main>
+
+      <footer class="footer">
+        <p>&copy; 2025 PlyPluse. All rights reserved.</p>
+        <p>Developed by Team PlyPluse.</p>
+      </footer>
+    </div>
+  </body>
+</html>

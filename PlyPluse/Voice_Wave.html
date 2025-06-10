@@ -1,0 +1,336 @@
+<!-- Developed By G Raghu
+                   K Goutham
+                   G Shashank
+                   Sk Sameer-->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Voice Wave</title>
+    <!-- Favicon -->
+    <link href="favicon_io/1.png" rel="icon" />
+    <link href="../favicon.png" rel="icon" />
+    <meta
+      content="Music Wave, Keytone Wave, Voice Wave, audio visualization, music analysis, interactive music, sound visualization, real-time audio processing"
+      name="keywords"
+    />
+    <meta
+      content="PlyPluse offers interactive audio visualization experiences. Explore Music Wave for uploaded audio, Keytone Wave for keyboard input, and Voice Wave for real-time voice visualization."
+      name="description"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap");
+
+      /* Body & background */
+      body {
+        margin: 0;
+        min-height: 100vh; /* Ensure body takes full viewport height */
+        background: linear-gradient(135deg, #52002d, #5c3db9);
+        font-family: "Inter", sans-serif;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between; /* Changed to space-between to push footer to bottom */
+        align-items: center;
+        color: #e0e6f0;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        /* Removed overflow: hidden; to allow scrolling */
+      }
+
+      /* Container with glassmorphism */
+      .glass-container {
+        background: rgba(255, 255, 255, 0.1);
+        /*box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);*/
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        width: 90vw;
+        max-width: 900px;
+        padding: 30px 40px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        user-select: none;
+        /* Removed margin-top: 2rem; as space-between will handle vertical spacing */
+        flex-grow: 1; /* Allow the container to grow and push the footer down */
+        margin-top: 2rem; /* Add some space from the navbar */
+        margin-bottom: 2rem; /* Add some space before the footer */
+      }
+
+      h2 {
+        font-weight: 700;
+        font-size: 2rem;
+        margin-bottom: 1.5rem;
+        letter-spacing: 1.3px;
+        text-transform: uppercase;
+        color: #bcd4e6cc;
+      }
+
+      canvas {
+        width: 100%;
+        height: 300px;
+        border-radius: 15px;
+        box-shadow: 0 0 20px #4ac1ffaa;
+        background: rgba(0, 0, 0, 0.836);
+        margin-bottom: 1.8rem;
+        display: block;
+      }
+
+      button {
+        background: rgba(255 255 255 / 0.15);
+        border: 1.5px solid rgba(255 255 255 / 0.4);
+        padding: 14px 50px;
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #d0e8ffcc;
+        border-radius: 40px;
+        cursor: pointer;
+        transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        /* box-shadow: 0 8px 20px rgba(74, 193, 255, 0.3);*/
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        user-select: none;
+        /*text-shadow: 0 0 4px rgba(74, 193, 255, 0.7);*/
+      }
+
+      button:hover {
+        background: rgba(255 255 255 / 0.3);
+        /*box-shadow: 0 12px 35px rgba(74, 193, 255, 0.6);*/
+        color: #ffffffdd;
+      }
+
+      /* Responsive font size */
+      @media (max-width: 480px) {
+        h2 {
+          font-size: 1.5rem;
+        }
+        button {
+          padding: 12px 30px;
+          font-size: 1rem;
+        }
+      }
+      .footer {
+        margin-top: 3rem;
+        text-align: center;
+        color: #ffffff; /* gray-400 */
+        font-size: 0.875rem;
+      }
+      /* Custom styles for glassmorphism effect */
+      .glassmorphic {
+        background: rgba(
+          255,
+          255,
+          255,
+          0.1
+        ); /* Slightly transparent white background */
+        backdrop-filter: blur(10px); /* Blur effect */
+        border: 1px solid rgba(255, 255, 255, 0.2); /* Subtle white border */
+        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37); /* Shadow effect */
+        border-radius: 15px; /* Rounded corners */
+      }
+      .text-shadow {
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); /* Add subtle text shadow for readability */
+      }
+    </style>
+  </head>
+  <body class="p-4 sm:p-6 md:p-8">
+    <nav
+      class="glassmorphic w-full max-w-7xl mx-auto p-4 sm:p-6 mb-8 flex flex-col sm:flex-row items-center justify-between space-y-4 sm:space-y-0 shadow-lg"
+    >
+      <div class="flex items-center">
+        <span
+          class="text-white text-3xl font-extrabold tracking-wide text-shadow"
+        >
+          <span class="text-indigo-200">P</span>LY
+          <span class="text-indigo-200">P</span>LUSE
+        </span>
+      </div>
+
+      <div
+        class="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-8 text-white text-lg font-medium"
+      >
+        <a
+          href="index.html"
+          class="hover:text-indigo-200 transition duration-300"
+          >Home</a
+        >
+        <a
+          href="Music_Wave.html"
+          class="hover:text-indigo-200 transition duration-300"
+          >Music</a
+        >
+        <a
+          href="Keytone_Wave.html"
+          class="hover:text-indigo-200 transition duration-300"
+          >Keytone</a
+        >
+        <a
+          href="Voice_Wave.html"
+          class="hover:text-indigo-200 transition duration-300"
+          >Voice</a
+        >
+      </div>
+    </nav>
+
+    <div class="glass-container">
+      <h2
+        style="
+          font-weight: 700;
+          font-size: 2rem;
+          margin-bottom: 1.5rem;
+          letter-spacing: 1.3px;
+          text-transform: uppercase;
+          color: #ffffffcc;
+        "
+      >
+        Speak to Visualize
+      </h2>
+      <canvas id="visualizer"></canvas>
+      <button
+        id="startBtn"
+        style="
+          background: rgba(255 255 255 / 0.15);
+          border: 1.5px solid rgba(255 255 255 / 0.4);
+          padding: 14px 50px;
+          font-size: 1.1rem;
+          font-weight: 700;
+          color: #ffffffcc;
+          border-radius: 40px;
+          cursor: pointer;
+          transition: background-color 0.3s ease, box-shadow 0.3s ease;
+          backdrop-filter: blur(8px);
+          -webkit-backdrop-filter: blur(8px);
+          user-select: none;
+        "
+      >
+        Start Microphone
+      </button>
+    </div>
+    <footer class="footer">
+      <p>&copy; 2025 PlyPluse. All rights reserved.</p>
+      <p>Developed by Team PlyPluse.</p>
+    </footer>
+
+    <script>
+      const canvas = document.getElementById("visualizer");
+      const ctx = canvas.getContext("2d");
+      let audioCtx;
+      let analyser;
+      let dataArray;
+      let bufferLength;
+
+      // Resize canvas to full width and fixed height
+      function resizeCanvas() {
+        canvas.width = canvas.clientWidth;
+        canvas.height = 300;
+      }
+      resizeCanvas();
+      window.addEventListener("resize", resizeCanvas);
+
+      const startBtn = document.getElementById("startBtn");
+
+      startBtn.addEventListener("click", async () => {
+        if (!navigator.mediaDevices.getUserMedia) {
+          alert("Your browser does not support microphone access.");
+          return;
+        }
+
+        startBtn.disabled = true;
+        startBtn.textContent = "Listening...";
+
+        const stream = await navigator.mediaDevices.getUserMedia({
+          audio: true,
+        });
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const source = audioCtx.createMediaStreamSource(stream);
+
+        analyser = audioCtx.createAnalyser();
+        analyser.fftSize = 2048;
+
+        bufferLength = analyser.fftSize;
+        dataArray = new Uint8Array(bufferLength);
+
+        source.connect(analyser);
+        visualize();
+      });
+
+      function visualize() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        function draw() {
+          requestAnimationFrame(draw);
+
+          analyser.getByteTimeDomainData(dataArray);
+
+          // Calculate volume (RMS)
+          let sum = 0;
+          for (let i = 0; i < bufferLength; i++) {
+            let val = (dataArray[i] - 128) / 128;
+            sum += val * val;
+          }
+          let rms = Math.sqrt(sum / bufferLength);
+
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+          if (rms > 0.02) {
+            // Threshold to only draw when speaking
+            // Gradient for waveform
+            const gradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
+            gradient.addColorStop(0, "rgba(74, 193, 255, 0.9)");
+            gradient.addColorStop(0.5, "rgba(0, 255, 255, 0.8)");
+            gradient.addColorStop(1, "rgba(74, 193, 255, 0.9)");
+
+            ctx.lineWidth = 4;
+            ctx.strokeStyle = gradient;
+            ctx.shadowColor = "rgba(74, 193, 255, 0.7)";
+            ctx.shadowBlur = 20;
+
+            ctx.beginPath();
+
+            let sliceWidth = canvas.width / bufferLength;
+            let x = 0;
+
+            for (let i = 0; i < bufferLength; i++) {
+              let v = dataArray[i] / 128.0; // normalized between 0 and 2
+              let y = v * (canvas.height / 2);
+
+              if (i === 0) {
+                ctx.moveTo(x, y);
+              } else {
+                ctx.lineTo(x, y);
+              }
+              x += sliceWidth;
+            }
+
+            ctx.lineTo(canvas.width, canvas.height / 2);
+            ctx.stroke();
+
+            // Glow line below waveform
+            ctx.beginPath();
+            ctx.moveTo(0, canvas.height / 2 + 12);
+            ctx.lineTo(canvas.width, canvas.height / 2 + 12);
+            /* ctx.strokeStyle = "rgba(0, 255, 255, 0.15)";
+            ctx.lineWidth = 16;
+            ctx.shadowBlur = 30;
+            ctx.stroke();*/
+          } else {
+            // Subtle "waiting" text
+            ctx.font = "24px Inter, sans-serif";
+            ctx.fillStyle = "rgba(74, 193, 255, 0.3)";
+            ctx.textAlign = "center";
+            ctx.fillText(
+              "Speak to see the magic...",
+              canvas.width / 2,
+              canvas.height / 2
+            );
+          }
+        }
+
+        draw();
+      }
+    </script>
+  </body>
+</html>
